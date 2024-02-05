@@ -11,7 +11,7 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { FormEvent, useState } from "react";
-// import { useAppDispatch } from "@/redux/hooks";
+
 import {
   Select,
   SelectContent,
@@ -20,17 +20,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useAddTodoMutation } from "@/redux/api/api";
-// import { addTodo } from "@/redux/features/todoSlice";
+import { PenBoxIcon } from "lucide-react";
+import { useUpdateTodoMutation } from "@/redux/api/api";
 
-const AddTodoModel = () => {
+const UpdateTodoModel = ({
+  id,
+  isCompleted,
+}: {
+  id: string;
+  isCompleted: boolean;
+}) => {
+  const [updateTodo] = useUpdateTodoMutation();
   const [task, setTask] = useState("");
   const [priority, setPriority] = useState("");
   const [description, setDescription] = useState("");
-  // const dispatch = useAppDispatch();
-  //for server state
-  const [addTodo] = useAddTodoMutation();
-  // console.log({ data, isLoading, isError, isSuccess });
+
   const onSubmit = (e: FormEvent) => {
     // const generateId = Math.random().toString(36).substring(2, 9);
     e.preventDefault();
@@ -38,20 +42,26 @@ const AddTodoModel = () => {
       title: task,
       priority,
       description,
+      isCompleted,
     };
-    //for local state
-    // dispatch(addTodo(todoDetails));
-    addTodo(todoDetails);
+    const options = {
+      id,
+      data: todoDetails,
+    };
+    updateTodo(options);
+    // console.log(todoDetails);
   };
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-primary-gradient font-semibold">Add Todo</Button>
+        <Button className="p-2 bg-primary-gradient">
+          <PenBoxIcon></PenBoxIcon>
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Task</DialogTitle>
-          <DialogDescription>Add your task to complete...</DialogDescription>
+          <DialogTitle>Update Task</DialogTitle>
+          <DialogDescription>Update your task to complete...</DialogDescription>
         </DialogHeader>
         <form onSubmit={onSubmit}>
           <div className="grid gap-4 py-4">
@@ -95,7 +105,7 @@ const AddTodoModel = () => {
           </div>
           <div className="flex justify-end">
             <DialogClose asChild>
-              <Button type="submit">Add Task</Button>
+              <Button type="submit">Update Task</Button>
             </DialogClose>
           </div>
         </form>
@@ -104,4 +114,4 @@ const AddTodoModel = () => {
   );
 };
 
-export default AddTodoModel;
+export default UpdateTodoModel;
